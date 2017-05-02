@@ -4,10 +4,12 @@ import android.content.Intent;
 import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Editable;
 import android.view.KeyEvent;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import static android.R.attr.id;
 
@@ -21,13 +23,13 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
 
-        EditText editText = (EditText) findViewById(R.id.editText);
+        final EditText editText = (EditText) findViewById(R.id.editText);
         editText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 boolean handled = false;
                 if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                    sendMessage();
+                    sendMessage(editText.getText().toString());
                     handled = true;
                 }
                 return handled;
@@ -36,12 +38,12 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public  void sendMessage(){
-        Intent i = new Intent(Intent.ACTION_VIEW,
-                Uri.parse("http://www.vogella.com")
-        );
+    public  void sendMessage(String SearchQuery){
+        Intent intent = new Intent(getApplicationContext(), SearchResults.class);
 
-        startActivity(i);
+                intent.putExtra("searchQuery", SearchQuery);
+
+        startActivity(intent);
     }
 
 }

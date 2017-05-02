@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">YoutubeExtension</string>
+    <string name="loadinginfos">Lade Badi-Infos</string>
+    <string name="pleasewait">Bitte warten...</string>
 </resources>
