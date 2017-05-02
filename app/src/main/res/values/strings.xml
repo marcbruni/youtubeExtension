@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">YoutubeExtension</string>
-    <string name="loadinginfos">Lade Badi-Infos</string>
+    <string name="loadinginfos">Lade Suchresultate</string>
     <string name="pleasewait">Bitte warten...</string>
+    <string name="noconn">Keine Internetverbindung</string>
+    <string name="checkconn">Bitte stellen Sie eine Verbindung zum Internet her.</string>
 </resources>

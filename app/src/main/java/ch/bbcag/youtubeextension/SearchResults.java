@@ -1,9 +1,16 @@
 package ch.bbcag.youtubeextension;
 
+import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.Settings;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.ArrayAdapter;
@@ -27,6 +34,10 @@ public class SearchResults extends AppCompatActivity {
     private String badiId;
     private String name;
     private ProgressDialog mDialog;
+    private AlertDialog aDialog;
+
+
+
 
     @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,6 +52,33 @@ public class SearchResults extends AppCompatActivity {
         // aber hier ziegen wir dem Benutzer den Ladedialog an.
         mDialog = ProgressDialog.show(this, getString(R.string.loadinginfos), getString(R.string.pleasewait));
         // Danach wollen wir die Badidaten von der Webseite wiewarm.ch holen und verarbeiten:
+
+        ConnectivityManager conMgr = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        final ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        final NetworkInfo activeNetwork = connMgr.getActiveNetworkInfo();
+        if (activeNetwork != null && activeNetwork.isConnected()) {
+            // notify user you are online
+        } else {
+            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+            alertDialogBuilder.setTitle(getString(R.string.noconn));
+            alertDialogBuilder.setMessage(getString(R.string.checkconn));
+            alertDialogBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+
+                    startActivity(intent);
+                }
+            });
+
+            AlertDialog alert = alertDialogBuilder.create();
+            alert.show();
+        }
+
+
+
+
         getBadiTemp("https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=50&q=" + searchQuery + "&type=channel&key=AIzaSyBfNM-tCGu4XYjgzNS8QSyCYjmAKtTPgws");
     }
 
@@ -51,6 +89,8 @@ public class SearchResults extends AppCompatActivity {
         final ArrayAdapter temps = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1);
         //Android verlangt, dass die Datenverarbeitung von den GUI Prozessen getrennt wird.
         // Darum starten wir hier einen asynchronen Task (quasi einen Hintergrundprozess).
+
+
 
         AsyncTask<String, String, String> execute = new AsyncTask<String, String, String>() {
             //Der AsyncTask verlangt die implementation der Methode doInBackground.
@@ -74,11 +114,23 @@ public class SearchResults extends AppCompatActivity {
                     Log.i(TAG, Integer.toString(code));
                 } catch (Exception e) {
                     Log.v(TAG, e.toString());
+                    //mDialog.setTitle(getString(R.string.noconn));
+                    mDialog.dismiss();
+                    // Show the AlertDialog.
+                    //AlertDialog alertDialog = alertDialogBuilder.show();
+
+
+
+
                 }
                 return msg;
             }
 
             public void onPostExecute(String result) {
+
+
+
+
                 //In result werden zurückgelieferten Daten der Methode doInBackground (return msg;) übergeben.
                 // Hier ist also unser Resultat der Seite z.B. http://www.wiewarm.ch/api/v1/bad.json/55
                 // In einem Browser IE, Chrome usw. sieht man schön das Resulat als JSON formatiert.
@@ -122,6 +174,10 @@ public class SearchResults extends AppCompatActivity {
             }
 
         }.execute(url);
+    }
+
+    public void onCancel(){
+
     }
 }
 
