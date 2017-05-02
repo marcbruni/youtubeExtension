@@ -13,6 +13,8 @@ import android.provider.Settings;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -27,6 +29,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.net.ssl.HttpsURLConnection;
+
+import ch.bbcag.youtubeextension.view.SearchResultAdapter;
 
 public class SearchResults extends AppCompatActivity {
 
@@ -86,7 +90,7 @@ public class SearchResults extends AppCompatActivity {
     private void getBadiTemp(String url) {
         //Den ArrayAdapter wollen wir später verwenden um die Temperaturen zu speichern
         // angezeigt sollen sie im Format der simple_list_item_1 werden (einem Standard Android Element)
-        final ArrayAdapter temps = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1);
+        final ArrayAdapter temps = new SearchResultAdapter(this, android.R.layout.simple_list_item_1);
         //Android verlangt, dass die Datenverarbeitung von den GUI Prozessen getrennt wird.
         // Darum starten wir hier einen asynchronen Task (quasi einen Hintergrundprozess).
 
@@ -136,7 +140,7 @@ public class SearchResults extends AppCompatActivity {
                 // In einem Browser IE, Chrome usw. sieht man schön das Resulat als JSON formatiert.
                 // JSON Daten können wir aber nicht direkt ausgeben, also müssen wir sie umformatieren.
                 try { //Zum Verarbeiten bauen wir die Methode parseBadiTemp und speichern das Resulat in einer Liste.
-                    List<String> badiInfos = parseBadiTemp(result);
+                    final List<String> badiInfos = parseBadiTemp(result);
                     //Jetzt müssen wir nur noch alle Elemente der Liste badidetails hinzufügen.
                     // Dazu holen wir die ListView badidetails vom GUI
                     ListView badidetails = (ListView) findViewById(R.id.badidetails);
@@ -144,6 +148,12 @@ public class SearchResults extends AppCompatActivity {
                     temps.addAll(badiInfos);
                     //Mit folgender Zeile fügen wir den befüllten ArrayAdapter der ListView hinzu:
                     badidetails.setAdapter(temps);
+                    badidetails.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                        @Override
+                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                            badiInfos.get(position);
+                        }
+                    });
                 } catch (JSONException e) {
                     Log.v(TAG, e.toString());
                 }
