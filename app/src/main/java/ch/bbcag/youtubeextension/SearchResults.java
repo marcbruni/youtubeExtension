@@ -18,6 +18,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.apache.commons.io.IOUtils;
 import org.json.JSONArray;
@@ -39,6 +40,7 @@ public class SearchResults extends AppCompatActivity {
     private String name;
     private ProgressDialog mDialog;
     private AlertDialog aDialog;
+    private SearchResultAdapter searchResultAdapter;
 
 
 
@@ -47,15 +49,13 @@ public class SearchResults extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_results);
         Intent intent = getIntent();
-        //Hier holen wir die Zusatzinformationen des Inents
+
         String searchQuery = intent.getStringExtra("searchQuery");
         TextView text = (TextView) findViewById(R.id.badiinfos);
-        //und setzen setzen als Text den Namen der Badi
-        text.setText(name);
-        // Evtl. ist der Dialog nicht sichtbar, weil die Daten schnell geladen sind
-        // aber hier ziegen wir dem Benutzer den Ladedialog an.
+        text.setText(searchQuery);
+
         mDialog = ProgressDialog.show(this, getString(R.string.loadinginfos), getString(R.string.pleasewait));
-        // Danach wollen wir die Badidaten von der Webseite wiewarm.ch holen und verarbeiten:
+
 
         ConnectivityManager conMgr = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
 
@@ -88,12 +88,8 @@ public class SearchResults extends AppCompatActivity {
 
 
     private void getBadiTemp(String url) {
-        //Den ArrayAdapter wollen wir später verwenden um die Temperaturen zu speichern
-        // angezeigt sollen sie im Format der simple_list_item_1 werden (einem Standard Android Element)
-        final ArrayAdapter temps = new SearchResultAdapter(this, android.R.layout.simple_list_item_1);
-        //Android verlangt, dass die Datenverarbeitung von den GUI Prozessen getrennt wird.
-        // Darum starten wir hier einen asynchronen Task (quasi einen Hintergrundprozess).
 
+        final AppCompatActivity activity = this;
 
 
         AsyncTask<String, String, String> execute = new AsyncTask<String, String, String>() {
@@ -140,18 +136,23 @@ public class SearchResults extends AppCompatActivity {
                 // In einem Browser IE, Chrome usw. sieht man schön das Resulat als JSON formatiert.
                 // JSON Daten können wir aber nicht direkt ausgeben, also müssen wir sie umformatieren.
                 try { //Zum Verarbeiten bauen wir die Methode parseBadiTemp und speichern das Resulat in einer Liste.
-                    final List<String> badiInfos = parseBadiTemp(result);
+                    final List<SearchResult> searchResults = parseSearchResults(result);
                     //Jetzt müssen wir nur noch alle Elemente der Liste badidetails hinzufügen.
                     // Dazu holen wir die ListView badidetails vom GUI
                     ListView badidetails = (ListView) findViewById(R.id.badidetails);
-                    //und befüllen unser ArrayAdapter den wir am Anfang definiert haben (braucht es zum befüllen eines ListViews)
-                    temps.addAll(badiInfos);
-                    //Mit folgender Zeile fügen wir den befüllten ArrayAdapter der ListView hinzu:
-                    badidetails.setAdapter(temps);
+
+                    SearchResult[] data = searchResults.toArray(new SearchResult[0]);
+
+                    searchResultAdapter = new SearchResultAdapter(activity, R.layout.item_search_result, data);
+
+                    badidetails.setAdapter(searchResultAdapter);
                     badidetails.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                         @Override
                         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                            badiInfos.get(position);
+                            SearchResult sresult = searchResults.get(position);
+                            Intent i = new Intent(getApplicationContext(), SingleChannel.class);
+                            i.putExtra("id", sresult.getId());
+                            startActivity(i);
                         }
                     });
                 } catch (JSONException e) {
@@ -159,12 +160,12 @@ public class SearchResults extends AppCompatActivity {
                 }
             }
 
-            private ArrayList<String> parseBadiTemp(String jonString) throws JSONException {
+            private ArrayList<SearchResult> parseSearchResults(String jonString) throws JSONException {
                 {
                     //Wie bereits erwähnt können JSON Daten nicht direkt einem ListView übergeben werden.
                     // Darum parsen ("lesen") wir die JSON Daten und bauen eine ArrayListe, die kompatibel
                     // ,mit unserem ListView ist.
-                    ArrayList<String> resultList = new ArrayList<String>();
+                    ArrayList<SearchResult> resultList = new ArrayList<SearchResult>();
                     JSONObject jsonObj = jsonObj = new JSONObject(jonString);
                     JSONArray items = jsonObj.getJSONArray("items");
 
@@ -173,8 +174,16 @@ public class SearchResults extends AppCompatActivity {
 
                         JSONObject item = items.getJSONObject(i);
                         JSONObject snippet = item.getJSONObject("snippet");
-                        resultList.add(snippet.getString("title"));
 
+                        try {
+                            String title = snippet.getString("title");
+                            String id = snippet.getString("channelId");
+
+                            resultList.add(new SearchResult(id, title));
+                        }
+                        catch (JSONException e) {
+                            Toast.makeText(activity, e.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
                     }
 
 
