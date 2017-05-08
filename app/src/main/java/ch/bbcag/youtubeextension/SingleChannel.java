@@ -128,8 +128,6 @@ public class SingleChannel extends Activity {
                 // JSON Daten können wir aber nicht direkt ausgeben, also müssen wir sie umformatieren.
                 try { //Zum Verarbeiten bauen wir die Methode parseBadiTemp und speichern das Resulat in einer Liste.
                     channel  = parseSearchResults(result);
-                    Toast.makeText(activity, channel.description, Toast.LENGTH_SHORT).show();
-                    Toast.makeText(activity, channel.title, Toast.LENGTH_SHORT).show();
                     runOnUiThread(new Runnable() {
                         public void run() {
                             setContentView(R.layout.single_channel);
@@ -139,10 +137,12 @@ public class SingleChannel extends Activity {
                             final TextView description = (TextView) findViewById(R.id.description);
                             final TextView viewCount = (TextView) findViewById(R.id.viewCount);
                             final TextView commentCount = (TextView) findViewById(R.id.commentCount);
+                            final TextView subscriberCount = (TextView) findViewById(R.id.subscriberCount);
                             title.setText(channel.title);
                             description.setText(channel.description);
                             viewCount.setText(channel.viewCount);
-                            commentCount.setText(channel.commentCount);
+                            commentCount.setText(channel.subscriberCount);
+                            subscriberCount.setText(channel.subscriberCount);
 
 
 
@@ -197,12 +197,14 @@ public class SingleChannel extends Activity {
                             String description = snippet.getString("description");
                             String viewCount = statistics.getString("viewCount");
                             String commentCount = statistics.getString("commentCount");
+                            String subscriberCount = statistics.getString("subscriberCount");
 
 
                             channel.title = title;
                             channel.description = description;
                             channel.setViewCount(viewCount);
                             channel.setCommentCount(commentCount);
+                            channel.setSubscriberCount(subscriberCount);
 
 
 
