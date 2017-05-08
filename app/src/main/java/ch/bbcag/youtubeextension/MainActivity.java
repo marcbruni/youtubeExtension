@@ -1,17 +1,12 @@
 package ch.bbcag.youtubeextension;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.Editable;
 import android.view.KeyEvent;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import static android.R.attr.id;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -29,7 +24,7 @@ public class MainActivity extends AppCompatActivity {
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 boolean handled = false;
                 if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                    sendMessage(editText.getText().toString());
+                    search(editText.getText().toString());
                     handled = true;
                 }
                 return handled;
@@ -38,7 +33,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public  void sendMessage(String SearchQuery){
+    public  void search(String SearchQuery){
         Intent intent = new Intent(getApplicationContext(), SearchResults.class);
 
                 intent.putExtra("searchQuery", SearchQuery);
