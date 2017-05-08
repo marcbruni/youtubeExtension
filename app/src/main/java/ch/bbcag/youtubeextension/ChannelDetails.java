@@ -11,6 +11,17 @@ public class ChannelDetails {
     public String description;
     public String viewCount;
     public String commentCount;
+    public String videoCount;
+    public String subscriberCount;
+
+    public void setVideoCount(String videoCount) {
+        double value = Double.parseDouble(videoCount);
+        DecimalFormat formatter = new DecimalFormat("#,###");
+        this.videoCount = formatter.format(value).toString();
+    }
+
+
+
 
     public void setSubscriberCount(String subscriberCount) {
         double value = Double.parseDouble(subscriberCount);
@@ -18,7 +29,6 @@ public class ChannelDetails {
         this.subscriberCount = formatter.format(value).toString();
     }
 
-    public String subscriberCount;
 
     public void setViewCount(String viewCount) {
         double value = Double.parseDouble(viewCount);

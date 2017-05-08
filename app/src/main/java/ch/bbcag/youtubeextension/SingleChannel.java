@@ -138,11 +138,13 @@ public class SingleChannel extends Activity {
                             final TextView viewCount = (TextView) findViewById(R.id.viewCount);
                             final TextView commentCount = (TextView) findViewById(R.id.commentCount);
                             final TextView subscriberCount = (TextView) findViewById(R.id.subscriberCount);
+                            final TextView videoCount = (TextView) findViewById(R.id.videoCount);
                             title.setText(channel.title);
                             description.setText(channel.description);
                             viewCount.setText(channel.viewCount);
                             commentCount.setText(channel.subscriberCount);
                             subscriberCount.setText(channel.subscriberCount);
+                            videoCount.setText(channel.subscriberCount);
 
 
 
@@ -198,6 +200,7 @@ public class SingleChannel extends Activity {
                             String viewCount = statistics.getString("viewCount");
                             String commentCount = statistics.getString("commentCount");
                             String subscriberCount = statistics.getString("subscriberCount");
+                            String videoCount = statistics.getString("videoCount");
 
 
                             channel.title = title;
@@ -205,6 +208,7 @@ public class SingleChannel extends Activity {
                             channel.setViewCount(viewCount);
                             channel.setCommentCount(commentCount);
                             channel.setSubscriberCount(subscriberCount);
+                            channel.setVideoCount(videoCount);
 
 
 
