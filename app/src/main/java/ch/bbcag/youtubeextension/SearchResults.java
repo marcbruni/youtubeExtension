@@ -1,5 +1,6 @@
 package ch.bbcag.youtubeextension;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -28,6 +29,8 @@ import org.json.JSONObject;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Handler;
+import java.util.logging.LogRecord;
 
 import javax.net.ssl.HttpsURLConnection;
 
@@ -40,7 +43,11 @@ public class SearchResults extends AppCompatActivity {
     private String name;
     private ProgressDialog mDialog;
     private AlertDialog aDialog;
+
     private SearchResultAdapter searchResultAdapter;
+
+    public Handler mHandler;
+    public Context context;
 
 
 
@@ -61,28 +68,8 @@ public class SearchResults extends AppCompatActivity {
 
         final ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         final NetworkInfo activeNetwork = connMgr.getActiveNetworkInfo();
-        if (activeNetwork != null && activeNetwork.isConnected()) {
-            // notify user you are online
-        } else {
-            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
-            alertDialogBuilder.setTitle(getString(R.string.noconn));
-            alertDialogBuilder.setMessage(getString(R.string.checkconn));
-            alertDialogBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
 
-                    startActivity(intent);
-                }
-            });
-
-            AlertDialog alert = alertDialogBuilder.create();
-            alert.show();
-        }
-
-
-
-
+        context = this;
         getBadiTemp("https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=50&q=" + searchQuery + "&type=channel&key=AIzaSyBfNM-tCGu4XYjgzNS8QSyCYjmAKtTPgws");
     }
 
@@ -157,6 +144,26 @@ public class SearchResults extends AppCompatActivity {
                     });
                 } catch (JSONException e) {
                     Log.v(TAG, e.toString());
+                    runOnUiThread(new Runnable() {
+                        public void run() {
+
+                            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
+                            alertDialogBuilder.setTitle(getString(R.string.noconn));
+                            alertDialogBuilder.setMessage(getString(R.string.checkconn));
+                            alertDialogBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+
+                                    startActivity(intent);
+                                }
+                            });
+
+                            AlertDialog alert = alertDialogBuilder.create();
+                            alert.show();
+
+                        }
+                    });
                 }
             }
 
@@ -168,6 +175,7 @@ public class SearchResults extends AppCompatActivity {
                     ArrayList<SearchResult> resultList = new ArrayList<SearchResult>();
                     JSONObject jsonObj = jsonObj = new JSONObject(jonString);
                     JSONArray items = jsonObj.getJSONArray("items");
+
 
 
                     for (int i = 0; i < items.length(); i++) {
@@ -186,7 +194,37 @@ public class SearchResults extends AppCompatActivity {
                         }
                     }
 
+                    if(resultList.isEmpty()){
 
+                        runOnUiThread(new Runnable() {
+                            public void run() {
+
+                                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
+                                alertDialogBuilder.setTitle(getString(R.string.nores));
+                                alertDialogBuilder.setMessage(getString(R.string.changequery));
+                                alertDialogBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+
+                                        startActivity(intent);
+                                    }
+                                });
+
+                                AlertDialog alert = alertDialogBuilder.create();
+                                alert.show();
+
+                            }
+                        });
+                    }
+                       /* mHandler.post(new Runnable() {
+                            public void run(){
+                                //Be sure to pass your Activity class, not the Thread
+                                AlertDialog.Builder builder = new AlertDialog.Builder(MyActivity.this);
+                                //... setup dialog and show
+                            }
+                        });
+                    }*/
 
                     return resultList;
                 }

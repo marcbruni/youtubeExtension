@@ -4,4 +4,6 @@
     <string name="pleasewait">Bitte warten...</string>
     <string name="noconn">Keine Internetverbindung</string>
     <string name="checkconn">Bitte stellen Sie eine Verbindung zum Internet her.</string>
+    <string name="nores">Keine Ergebnisse</string>
+    <string name="changequery">Bitte passen sie ihre Suchkriterien an.</string>
 </resources>
