@@ -38,9 +38,7 @@ import ch.bbcag.youtubeextension.view.SearchResultAdapter;
 
 public class SearchResults extends AppCompatActivity {
 
-    private static String TAG = "BadiInfo";
-    private String badiId;
-    private String name;
+    private static String TAG = "ChannelInfo";
     private ProgressDialog mDialog;
     private AlertDialog aDialog;
 
@@ -70,11 +68,11 @@ public class SearchResults extends AppCompatActivity {
         final NetworkInfo activeNetwork = connMgr.getActiveNetworkInfo();
 
         context = this;
-        getBadiTemp("https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=50&q=" + searchQuery + "&type=channel&key=AIzaSyBfNM-tCGu4XYjgzNS8QSyCYjmAKtTPgws");
+        getChannels("https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=50&q=" + searchQuery + "&type=channel&key=AIzaSyBfNM-tCGu4XYjgzNS8QSyCYjmAKtTPgws");
     }
 
 
-    private void getBadiTemp(String url) {
+    private void getChannels(String url) {
 
         final AppCompatActivity activity = this;
 
@@ -84,11 +82,11 @@ public class SearchResults extends AppCompatActivity {
             // Nachdem doInBackground ausgeführt wurde, startet automatisch die Methode onPostExecute
             // mit den Daten die man in der Metohde doInBackground mit return zurückgegeben hat (hier msg).
             @Override
-            protected String doInBackground(String[] badi) {
+            protected String doInBackground(String[] channel) {
                 //In der variable msg soll die Antwort der Seite wiewarm.ch gespeichert werden.
                 String msg = "";
                 try {
-                    URL url = new URL(badi[0]);
+                    URL url = new URL(channel[0]);
                     //Hier bauen wir die Verbindung auf:
                     HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
                     // Lesen des Antwortcodes der Webseite:
@@ -105,10 +103,6 @@ public class SearchResults extends AppCompatActivity {
                     mDialog.dismiss();
                     // Show the AlertDialog.
                     //AlertDialog alertDialog = alertDialogBuilder.show();
-
-
-
-
                 }
                 return msg;
             }
@@ -126,14 +120,14 @@ public class SearchResults extends AppCompatActivity {
                     final List<SearchResult> searchResults = parseSearchResults(result);
                     //Jetzt müssen wir nur noch alle Elemente der Liste badidetails hinzufügen.
                     // Dazu holen wir die ListView badidetails vom GUI
-                    ListView badidetails = (ListView) findViewById(R.id.badidetails);
+                    ListView channeldetails = (ListView) findViewById(R.id.badidetails);
 
                     SearchResult[] data = searchResults.toArray(new SearchResult[0]);
 
                     searchResultAdapter = new SearchResultAdapter(activity, R.layout.item_search_result, data);
 
-                    badidetails.setAdapter(searchResultAdapter);
-                    badidetails.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    channeldetails.setAdapter(searchResultAdapter);
+                    channeldetails.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                         @Override
                         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                             SearchResult sresult = searchResults.get(position);
