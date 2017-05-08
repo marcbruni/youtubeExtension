@@ -16,7 +16,7 @@
         android:text="ChannelName"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/badiinfos"
+        android:id="@+id/channeldetails"
         android:textSize="20dp"
 
         />

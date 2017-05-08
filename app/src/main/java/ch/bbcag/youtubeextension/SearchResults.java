@@ -120,7 +120,7 @@ public class SearchResults extends AppCompatActivity {
                     final List<SearchResult> searchResults = parseSearchResults(result);
                     //Jetzt müssen wir nur noch alle Elemente der Liste badidetails hinzufügen.
                     // Dazu holen wir die ListView badidetails vom GUI
-                    ListView channeldetails = (ListView) findViewById(R.id.badidetails);
+                    ListView channeldetails = (ListView) findViewById(R.id.channeldetails);
 
                     SearchResult[] data = searchResults.toArray(new SearchResult[0]);
 
