@@ -78,7 +78,7 @@ public class SingleChannel extends Activity {
             final NetworkInfo activeNetwork = connMgr.getActiveNetworkInfo();
 
             context = this;
-            getChannels("https://www.googleapis.com/youtube/v3/channels?part=snippet&id="+id+"&key=AIzaSyBfNM-tCGu4XYjgzNS8QSyCYjmAKtTPgws");
+            getChannels("https://www.googleapis.com/youtube/v3/channels?part=snippet%2C+statistics&id="+id+"&key=AIzaSyBfNM-tCGu4XYjgzNS8QSyCYjmAKtTPgws");
         }
 
 
@@ -128,7 +128,7 @@ public class SingleChannel extends Activity {
                 // JSON Daten können wir aber nicht direkt ausgeben, also müssen wir sie umformatieren.
                 try { //Zum Verarbeiten bauen wir die Methode parseBadiTemp und speichern das Resulat in einer Liste.
                     channel  = parseSearchResults(result);
-                    Toast.makeText(activity, channel.descr, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(activity, channel.description, Toast.LENGTH_SHORT).show();
                     Toast.makeText(activity, channel.title, Toast.LENGTH_SHORT).show();
                     runOnUiThread(new Runnable() {
                         public void run() {
@@ -137,8 +137,14 @@ public class SingleChannel extends Activity {
 
                             final TextView title = (TextView) findViewById(R.id.title);
                             final TextView description = (TextView) findViewById(R.id.description);
+                            final TextView viewCount = (TextView) findViewById(R.id.viewCount);
+                            final TextView commentCount = (TextView) findViewById(R.id.commentCount);
                             title.setText(channel.title);
-                            description.setText(channel.descr);
+                            description.setText(channel.description);
+                            viewCount.setText(channel.viewCount);
+                            commentCount.setText(channel.commentCount);
+
+
 
                         }
                     });
@@ -183,12 +189,20 @@ public class SingleChannel extends Activity {
 
                         JSONObject item = items.getJSONObject(i);
                         JSONObject snippet = item.getJSONObject("snippet");
+                        JSONObject statistics = item.getJSONObject("statistics");
+
 
                         try {
                             String title = snippet.getString("title");
-                            String des = snippet.getString("description");
+                            String description = snippet.getString("description");
+                            String viewCount = statistics.getString("viewCount");
+                            String commentCount = statistics.getString("commentCount");
+
+
                             channel.title = title;
-                            channel.descr = des;
+                            channel.description = description;
+                            channel.setViewCount(viewCount);
+                            channel.setCommentCount(commentCount);
 
 
 
@@ -198,7 +212,7 @@ public class SingleChannel extends Activity {
                         }
                     }
 
-                    if(channel.title == null || channel.descr == null){
+                    if(channel.title == null || channel.description == null){
 
                         runOnUiThread(new Runnable() {
                             public void run() {
