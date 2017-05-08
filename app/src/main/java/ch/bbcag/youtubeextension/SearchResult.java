@@ -8,10 +8,12 @@ public class SearchResult {
 
     private String id;
     private String title;
+    private String thumbUrl;
 
-    public SearchResult(String id, String title) {
+    public SearchResult(String id, String title, String thumbUrl) {
         this.id = id;
         this.title = title;
+        this.thumbUrl = thumbUrl;
     }
 
 
@@ -25,5 +27,13 @@ public class SearchResult {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public String getThumbUrl() {
+        return thumbUrl;
+    }
+
+    public void setThumbUrl(String thumbUrl) {
+        this.thumbUrl = thumbUrl;
     }
 }

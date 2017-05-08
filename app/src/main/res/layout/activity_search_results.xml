@@ -16,7 +16,7 @@
         android:text="ChannelName"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/channeldetails"
+        android:id="@+id/channelinfos"
         android:textSize="20dp"
 
         />
@@ -24,7 +24,7 @@
     <ListView
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/badidetails"
+        android:id="@+id/channeldetails"
 
         />
 </LinearLayout>

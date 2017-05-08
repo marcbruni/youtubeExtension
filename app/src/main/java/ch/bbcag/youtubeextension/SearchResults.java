@@ -6,6 +6,9 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
@@ -17,6 +20,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -26,6 +30,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedInputStream;
+import java.io.DataInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -56,7 +65,7 @@ public class SearchResults extends AppCompatActivity {
         Intent intent = getIntent();
 
         String searchQuery = intent.getStringExtra("searchQuery");
-        TextView text = (TextView) findViewById(R.id.badiinfos);
+        TextView text = (TextView) findViewById(R.id.channelinfos);
         text.setText(searchQuery);
 
         mDialog = ProgressDialog.show(this, getString(R.string.loadinginfos), getString(R.string.pleasewait));
@@ -72,7 +81,7 @@ public class SearchResults extends AppCompatActivity {
     }
 
 
-    private void getChannels(String url) {
+    private void getChannels(final String url) {
 
         final AppCompatActivity activity = this;
 
@@ -178,13 +187,20 @@ public class SearchResults extends AppCompatActivity {
                         JSONObject snippet = item.getJSONObject("snippet");
 
                         try {
+
                             String title = snippet.getString("title");
                             String id = snippet.getString("channelId");
+                            JSONObject deafultthumb = snippet.getJSONObject("thumbnails");
+                            JSONObject thumb = deafultthumb.getJSONObject("default");
+                            String channelthumb = thumb.getString("url");
 
-                            resultList.add(new SearchResult(id, title));
+                            resultList.add(new SearchResult(id, title, channelthumb));
+
+
                         }
                         catch (JSONException e) {
                             Toast.makeText(activity, e.getMessage(), Toast.LENGTH_SHORT).show();
+                            e.printStackTrace();
                         }
                     }
 
@@ -230,6 +246,7 @@ public class SearchResults extends AppCompatActivity {
     public void onCancel(){
 
     }
+
 }
 
 

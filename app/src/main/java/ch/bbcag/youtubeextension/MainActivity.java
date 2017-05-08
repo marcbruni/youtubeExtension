@@ -35,8 +35,7 @@ public class MainActivity extends AppCompatActivity {
 
     public  void search(String SearchQuery){
         Intent intent = new Intent(getApplicationContext(), SearchResults.class);
-
-                intent.putExtra("searchQuery", SearchQuery);
+        intent.putExtra("searchQuery", SearchQuery);
 
         startActivity(intent);
     }
