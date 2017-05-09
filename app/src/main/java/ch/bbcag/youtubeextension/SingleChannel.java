@@ -57,6 +57,10 @@ public class SingleChannel extends Activity {
 
         Toast.makeText(this, id, Toast.LENGTH_SHORT).show();
 
+
+
+
+
             mDialog = ProgressDialog.show(this, getString(R.string.loadinginfos), getString(R.string.pleasewait));
 
 
@@ -176,14 +180,13 @@ public class SingleChannel extends Activity {
                     JSONObject jsonObj = jsonObj = new JSONObject(jonString);
                     JSONArray items = jsonObj.getJSONArray("items");
 
+
+
                     for (int i = 0; i < items.length(); i++) {
 
                         JSONObject item = items.getJSONObject(i);
                         JSONObject snippet = item.getJSONObject("snippet");
                         JSONObject statistics = item.getJSONObject("statistics");
-                        JSONObject thumbnails = item.getJSONObject("thumbnails");
-                        JSONObject defaulturl = item.getJSONObject("default");
-
 
 
                         try {
@@ -193,7 +196,6 @@ public class SingleChannel extends Activity {
                             String commentCount = statistics.getString("commentCount");
                             String subscriberCount = statistics.getString("subscriberCount");
                             String videoCount = statistics.getString("videoCount");
-                            String urlthumbnail = defaulturl.getString("url");
 
 
                             channel.title = title;
@@ -235,6 +237,15 @@ public class SingleChannel extends Activity {
                             }
                         });
                     }
+                       /* mHandler.post(new Runnable() {
+                            public void run(){
+                                //Be sure to pass your Activity class, not the Thread
+                                AlertDialog.Builder builder = new AlertDialog.Builder(MyActivity.this);
+                                //... setup dialog and show
+                            }
+                        });
+                    }*/
+
                     return channel;
                 }
             }

@@ -9,7 +9,6 @@ import java.text.DecimalFormat;
 public class ChannelDetails {
     public String title;
     public String description;
-    public String imageurl;
     public String viewCount;
     public String commentCount;
     public String videoCount;
@@ -36,6 +35,9 @@ public class ChannelDetails {
         DecimalFormat formatter = new DecimalFormat("#,##0");
         this.videoCount = formatter.format(value).toString();
     }
+
+
+
 
     public void setSubscriberCount(String subscriberCount) {
         this.rawSubscriberCount = subscriberCount;
