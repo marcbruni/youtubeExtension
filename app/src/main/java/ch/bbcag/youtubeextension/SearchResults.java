@@ -61,11 +61,8 @@ public class SearchResults extends AppCompatActivity {
         //AsyncTask für ausführung im Hintergrund
         AsyncTask<String, String, String> execute = new AsyncTask<String, String, String>() {
             // doInBackGround für AsyncTask definieren
-            // Nachdem doInBackground ausgeführt wurde, startet automatisch die Methode onPostExecute
-            // mit den Daten die man in der Metohde doInBackground mit return zurückgegeben hat (hier msg).
             @Override
             protected String doInBackground(String[] channel) {
-                //In der variable apiReply soll die Antwort der Seite wiewarm.ch gespeichert werden.
                 String apiReply = "";
                 try {
                     URL url = new URL(channel[0]);
