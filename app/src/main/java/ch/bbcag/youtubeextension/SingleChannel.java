@@ -11,12 +11,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,13 +22,10 @@ import org.json.JSONObject;
 
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.logging.Handler;
 
 import javax.net.ssl.HttpsURLConnection;
 
 import ch.bbcag.youtubeextension.view.SearchResultAdapter;
-import ch.bbcag.youtubeextension.ChannelDetails;
 
 /**
  * Created by bvioly on 02.05.2017.
@@ -78,11 +70,11 @@ public class SingleChannel extends Activity {
             final NetworkInfo activeNetwork = connMgr.getActiveNetworkInfo();
 
             context = this;
-            getChannels("https://www.googleapis.com/youtube/v3/channels?part=snippet%2C+statistics&id="+id+"&key=AIzaSyBfNM-tCGu4XYjgzNS8QSyCYjmAKtTPgws");
+            getChannelDetails("https://www.googleapis.com/youtube/v3/channels?part=snippet%2C+statistics&id="+id+"&key=AIzaSyBfNM-tCGu4XYjgzNS8QSyCYjmAKtTPgws");
         }
 
 
-    private void getChannels(String url) {
+    private void getChannelDetails(String url) {
 
         final SingleChannel activity = this;
 
@@ -136,15 +128,18 @@ public class SingleChannel extends Activity {
                             final TextView title = (TextView) findViewById(R.id.title);
                             final TextView description = (TextView) findViewById(R.id.description);
                             final TextView viewCount = (TextView) findViewById(R.id.viewCount);
-                            final TextView commentCount = (TextView) findViewById(R.id.commentCount);
                             final TextView subscriberCount = (TextView) findViewById(R.id.subscriberCount);
                             final TextView videoCount = (TextView) findViewById(R.id.videoCount);
+                            final TextView viewsPerVideo = (TextView) findViewById(R.id.viewsPerVideo);
+                            final TextView commentsPerVideo = (TextView) findViewById(R.id.commentsPerVideo);
+                            channel.setViewsPerVideo();
                             title.setText(channel.title);
                             description.setText(channel.description);
                             viewCount.setText(channel.viewCount);
-                            commentCount.setText(channel.subscriberCount);
                             subscriberCount.setText(channel.subscriberCount);
-                            videoCount.setText(channel.subscriberCount);
+                            videoCount.setText(channel.videoCount);
+                            viewsPerVideo.setText(channel.viewsPerVideo);
+                            commentsPerVideo.setText(channel.commentCount);
 
 
 
@@ -209,6 +204,7 @@ public class SingleChannel extends Activity {
                             channel.setCommentCount(commentCount);
                             channel.setSubscriberCount(subscriberCount);
                             channel.setVideoCount(videoCount);
+                            channel.setViewsPerVideo();
 
 
 
