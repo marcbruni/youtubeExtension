@@ -12,7 +12,6 @@
     android:weightSum="1"
     >
 
-
     <TextView
         android:text="ChannelName"
         android:layout_width="fill_parent"
