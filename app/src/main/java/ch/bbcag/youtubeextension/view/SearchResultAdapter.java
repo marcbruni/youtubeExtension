@@ -76,7 +76,6 @@ public class SearchResultAdapter extends ArrayAdapter<SearchResult> {
         Thread getImage = new Thread(new Runnable() {
             @Override
             public void run() {
-                //Bitmap thumbnail = LoadImageFromWebOperations(result.getThumbUrl());
                 new ImageDownloaderTask(holder.imgSearchResultThumb).execute(result.getThumbUrl());
                 //holder.setThumbnail(thumbnail);
             }
