@@ -1,26 +1,16 @@
 package ch.bbcag.youtubeextension;
 
-import android.app.Activity;
-import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.Drawable;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -29,18 +19,9 @@ import org.apache.commons.io.IOUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.io.BufferedInputStream;
-import java.io.DataInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Handler;
-import java.util.logging.LogRecord;
-
 import javax.net.ssl.HttpsURLConnection;
 
 import ch.bbcag.youtubeextension.view.SearchResultAdapter;
@@ -49,11 +30,9 @@ public class SearchResults extends AppCompatActivity {
 
     private static String TAG = "ChannelInfo";
     private ProgressDialog mDialog;
-    private AlertDialog aDialog;
 
     private SearchResultAdapter searchResultAdapter;
 
-    public Handler mHandler;
     public Context context;
 
 
@@ -70,12 +49,6 @@ public class SearchResults extends AppCompatActivity {
 
         mDialog = ProgressDialog.show(this, getString(R.string.loadinginfos), getString(R.string.pleasewait));
 
-
-        ConnectivityManager conMgr = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
-
-        final ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        final NetworkInfo activeNetwork = connMgr.getActiveNetworkInfo();
-
         context = this;
         getChannels("https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=50&q=" + searchQuery + "&type=channel&key=AIzaSyBfNM-tCGu4XYjgzNS8QSyCYjmAKtTPgws");
     }
@@ -85,58 +58,45 @@ public class SearchResults extends AppCompatActivity {
 
         final AppCompatActivity activity = this;
 
-
+        //AsyncTask für ausführung im Hintergrund
         AsyncTask<String, String, String> execute = new AsyncTask<String, String, String>() {
-            //Der AsyncTask verlangt die implementation der Methode doInBackground.
+            // doInBackGround für AsyncTask definieren
             // Nachdem doInBackground ausgeführt wurde, startet automatisch die Methode onPostExecute
             // mit den Daten die man in der Metohde doInBackground mit return zurückgegeben hat (hier msg).
             @Override
             protected String doInBackground(String[] channel) {
-                //In der variable msg soll die Antwort der Seite wiewarm.ch gespeichert werden.
-                String msg = "";
+                //In der variable apiReply soll die Antwort der Seite wiewarm.ch gespeichert werden.
+                String apiReply = "";
                 try {
                     URL url = new URL(channel[0]);
-                    //Hier bauen wir die Verbindung auf:
+                    // Verbindung aufbauen
                     HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
-                    // Lesen des Antwortcodes der Webseite:
+                    // Antwortcode auslesen
                     int code = conn.getResponseCode();
-                    // Nun können wir den Lade Dialog wieder ausblenden (die Daten sind ja gelesen)
+                    // Ladedialog ausblenden
                     mDialog.dismiss();
-                    //Hier lesen wir die Nachricht der Webseite wiewarm.ch für Badi XY:
-                    msg = IOUtils.toString(conn.getInputStream());
-                    //und Loggen den Statuscode in der Konsole:
-                    Log.i(TAG, Integer.toString(code));
+                    //Antwort von API lesen
+                    apiReply = IOUtils.toString(conn.getInputStream());
                 } catch (Exception e) {
                     Log.v(TAG, e.toString());
-                    //mDialog.setTitle(getString(R.string.noconn));
+
                     mDialog.dismiss();
-                    // Show the AlertDialog.
-                    //AlertDialog alertDialog = alertDialogBuilder.show();
                 }
-                return msg;
+                return apiReply;
             }
 
             public void onPostExecute(String result) {
-
-
-
-
-                //In result werden zurückgelieferten Daten der Methode doInBackground (return msg;) übergeben.
-                // Hier ist also unser Resultat der Seite z.B. http://www.wiewarm.ch/api/v1/bad.json/55
-                // In einem Browser IE, Chrome usw. sieht man schön das Resulat als JSON formatiert.
-                // JSON Daten können wir aber nicht direkt ausgeben, also müssen wir sie umformatieren.
-                try { //Zum Verarbeiten bauen wir die Methode parseBadiTemp und speichern das Resulat in einer Liste.
+                // JSON verarbeiten
+                try {
                     final List<SearchResult> searchResults = parseSearchResults(result);
-                    //Jetzt müssen wir nur noch alle Elemente der Liste badidetails hinzufügen.
-                    // Dazu holen wir die ListView badidetails vom GUI
-                    ListView channeldetails = (ListView) findViewById(R.id.channeldetails);
+                    ListView channelDetails = (ListView) findViewById(R.id.channeldetails);
 
                     SearchResult[] data = searchResults.toArray(new SearchResult[0]);
 
                     searchResultAdapter = new SearchResultAdapter(activity, R.layout.item_search_result, data);
 
-                    channeldetails.setAdapter(searchResultAdapter);
-                    channeldetails.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    channelDetails.setAdapter(searchResultAdapter);
+                    channelDetails.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                         @Override
                         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                             SearchResult sresult = searchResults.get(position);
@@ -172,10 +132,7 @@ public class SearchResults extends AppCompatActivity {
 
             private ArrayList<SearchResult> parseSearchResults(String jonString) throws JSONException {
                 {
-                    //Wie bereits erwähnt können JSON Daten nicht direkt einem ListView übergeben werden.
-                    // Darum parsen ("lesen") wir die JSON Daten und bauen eine ArrayListe, die kompatibel
-                    // ,mit unserem ListView ist.
-                    ArrayList<SearchResult> resultList = new ArrayList<SearchResult>();
+                    ArrayList<SearchResult> resultList = new ArrayList<>();
                     JSONObject jsonObj = jsonObj = new JSONObject(jonString);
                     JSONArray items = jsonObj.getJSONArray("items");
 
@@ -227,24 +184,12 @@ public class SearchResults extends AppCompatActivity {
                             }
                         });
                     }
-                       /* mHandler.post(new Runnable() {
-                            public void run(){
-                                //Be sure to pass your Activity class, not the Thread
-                                AlertDialog.Builder builder = new AlertDialog.Builder(MyActivity.this);
-                                //... setup dialog and show
-                            }
-                        });
-                    }*/
 
                     return resultList;
                 }
             }
 
         }.execute(url);
-    }
-
-    public void onCancel(){
-
     }
 
 }
