@@ -2,6 +2,8 @@ package ch.bbcag.youtubeextension;
 
 import java.text.DecimalFormat;
 
+import ch.bbcag.youtubeextension.view.SearchResultAdapter;
+
 /**
  * Created by bbrunm on 08.05.2017.
  */
@@ -9,7 +11,6 @@ import java.text.DecimalFormat;
 public class ChannelDetails {
     public String title;
     public String description;
-    public String imageurl;
     public String viewCount;
     public String commentCount;
     public String videoCount;

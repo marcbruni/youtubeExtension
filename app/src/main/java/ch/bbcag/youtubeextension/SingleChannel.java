@@ -12,6 +12,8 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,6 +24,7 @@ import org.json.JSONObject;
 
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.net.ssl.HttpsURLConnection;
 
@@ -108,41 +111,38 @@ public class SingleChannel extends Activity {
             public void onPostExecute(String result) {
 
 
-
-
                 //In result werden zurückgelieferten Daten der Methode doInBackground (return msg;) übergeben.
                 // Hier ist also unser Resultat der Seite z.B. http://www.wiewarm.ch/api/v1/bad.json/55
                 // In einem Browser IE, Chrome usw. sieht man schön das Resulat als JSON formatiert.
                 // JSON Daten können wir aber nicht direkt ausgeben, also müssen wir sie umformatieren.
                 try { //Zum Verarbeiten bauen wir die Methode parseBadiTemp und speichern das Resulat in einer Liste.
-                    channel  = parseSearchResults(result);
+                    channel = parseSearchResults(result);
                     runOnUiThread(new Runnable() {
                         public void run() {
                             setContentView(R.layout.single_channel);
-
-
-                            final TextView title = (TextView) findViewById(R.id.title);
-                            final TextView description = (TextView) findViewById(R.id.description);
-                            final TextView viewCount = (TextView) findViewById(R.id.viewCount);
-                            final TextView subscriberCount = (TextView) findViewById(R.id.subscriberCount);
-                            final TextView videoCount = (TextView) findViewById(R.id.videoCount);
-                            final TextView viewsPerVideo = (TextView) findViewById(R.id.viewsPerVideo);
-                            final TextView commentsPerVideo = (TextView) findViewById(R.id.commentsPerVideo);
-                            channel.setViewsPerVideo();
-                            title.setText(channel.title);
-                            description.setText(channel.description);
-                            viewCount.setText(channel.viewCount);
-                            subscriberCount.setText(channel.subscriberCount);
-                            videoCount.setText(channel.videoCount);
-                            viewsPerVideo.setText(channel.viewsPerVideo);
-                            commentsPerVideo.setText(channel.commentCount);
-
-
-
                         }
                     });
 
-                } catch (JSONException e) {
+
+                    final TextView title = (TextView) findViewById(R.id.title);
+                    final TextView description = (TextView) findViewById(R.id.description);
+                    final TextView viewCount = (TextView) findViewById(R.id.viewCount);
+                    final TextView subscriberCount = (TextView) findViewById(R.id.subscriberCount);
+                    final TextView videoCount = (TextView) findViewById(R.id.videoCount);
+                    final TextView viewsPerVideo = (TextView) findViewById(R.id.viewsPerVideo);
+                    final TextView commentsPerVideo = (TextView) findViewById(R.id.commentsPerVideo);
+                    channel.setViewsPerVideo();
+                    title.setText(channel.title);
+                    description.setText(channel.description);
+                    viewCount.setText(channel.viewCount);
+                    subscriberCount.setText(channel.subscriberCount);
+                    videoCount.setText(channel.videoCount);
+                    viewsPerVideo.setText(channel.viewsPerVideo);
+                    commentsPerVideo.setText(channel.commentCount);
+
+
+                }
+                catch (JSONException e) {
                     Log.v(TAG, e.toString());
                     runOnUiThread(new Runnable() {
                         public void run() {

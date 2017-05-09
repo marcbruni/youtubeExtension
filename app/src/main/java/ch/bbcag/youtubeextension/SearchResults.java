@@ -142,6 +142,7 @@ public class SearchResults extends AppCompatActivity {
                             SearchResult sresult = searchResults.get(position);
                             Intent i = new Intent(getApplicationContext(), SingleChannel.class);
                             i.putExtra("id", sresult.getId());
+                            i.putExtra("thumbnail", sresult.getThumbUrl());
                             startActivity(i);
                         }
                     });
